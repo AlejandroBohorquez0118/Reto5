@@ -5,8 +5,10 @@
  */
 package co.usa.ciclo3.ciclo3.web;
 
+import co.usa.ciclo3.ciclo3.Modelo.Cliente;
+import co.usa.ciclo3.ciclo3.Modelo.ClienteReservaciones;
 import co.usa.ciclo3.ciclo3.Modelo.Reservaciones;
-import co.usa.ciclo3.ciclo3.Reportes.ContadorClientes;
+import co.usa.ciclo3.ciclo3.Modelo.StatusReport;
 import co.usa.ciclo3.ciclo3.Service.ReservacionesService;
 import java.util.List;
 import java.util.Optional;
@@ -82,12 +84,15 @@ public class ReservacionesController {
         
     }
     
-    @GetMapping("/report-clients")
-    public List<ContadorClientes> getReservationsReportsClients(){
-    
-        return reservacionesService.getTopClients();
-        
+
+    @GetMapping("/report-satus")
+    public StatusReport getStatusReport() {
+        return reservacionesService.getStatusReport();
     }
     
-    
+    @GetMapping("/report-clients")
+    public List<ClienteReservaciones> getTopClientes() {
+        return reservacionesService.getTopClientes();
+    }
+   
 }

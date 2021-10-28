@@ -5,8 +5,10 @@
  */
 package co.usa.ciclo3.ciclo3.Service;
 
+import co.usa.ciclo3.ciclo3.Modelo.Cliente;
+import co.usa.ciclo3.ciclo3.Modelo.ClienteReservaciones;
 import co.usa.ciclo3.ciclo3.Modelo.Reservaciones;
-import co.usa.ciclo3.ciclo3.Reportes.ContadorClientes;
+import co.usa.ciclo3.ciclo3.Modelo.StatusReport;
 import co.usa.ciclo3.ciclo3.Repository.crud.ReservacionesRepository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -100,40 +102,46 @@ public class ReservacionesService {
         return false;
 
     }
+    
+    public List<ClienteReservaciones> getTopClientes(){
+        return reservacionesRepository.getTopClientes();
+    }
+    
+    public StatusReport getStatusReport() {
+        List<Reservaciones> completed = reservacionesRepository.getReservacionesByStatus("completed");
+        List<Reservaciones> cancelled = reservacionesRepository.getReservacionesByStatus("cancelled");
+        StatusReport s = new StatusReport(completed.size(), cancelled.size());
+        return s;
+    }
 
     public List<Reservaciones>getReservaPeriodo(String dateA, String dateB){
     
-    SimpleDateFormat parser= new SimpleDateFormat("yyyy-MM-dd");
-    Date aDate= new Date();
-    Date bDate= new Date();
+        SimpleDateFormat parser= new SimpleDateFormat("yyyy-MM-dd");
+        Date aDate= new Date();
+        Date bDate= new Date();
     
-    try {
-    
-        aDate= parser.parse(dateA);
-        bDate= parser.parse(dateB);
-                
-    } 
-    catch(ParseException event){
-    
-        event.printStackTrace();
-    
+        try {
+
+            aDate= parser.parse(dateA);
+            bDate= parser.parse(dateB);
+
+        } 
+        catch(ParseException event){
+
+            event.printStackTrace();
+
+        }
+
+        if(aDate.before(bDate)){
+
+            return reservacionesRepository.getReservaPerdiodo(aDate, bDate);
+
+        }else{
+
+            return new ArrayList<>();
+
+        }
     }
     
-    if(aDate.before(bDate)){
-        
-        return reservacionesRepository.getReservaPerdiodo(aDate, bDate);
-        
-    }else{
-    
-    return new ArrayList<>();
-    
-    }
-    }
-    
-    public List<ContadorClientes> getTopClients(){
-    
-    return reservacionesRepository.getTopClients();
-    
-    }
-    
-    }
+
+ }
