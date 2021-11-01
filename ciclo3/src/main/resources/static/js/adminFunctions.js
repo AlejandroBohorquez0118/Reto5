@@ -1,14 +1,12 @@
 var idCarga; // Guarda el Id del elemento cuando se da click en el botón cargar
 
-
-
-function editar(){
+function editarAdmin(){
 
     var elemento={
         "idAdmin":idCarga,
-        "name":$("#name").val(),
-        "email":$("#email").val(),
-        "password":$("#password").val()
+        "name":$("#nameAdmin").val(),
+        "email":$("#emailAdmin").val(),
+        "password":$("#passwordAdmin").val()
     };
     
     var dataToSend=JSON.stringify(elemento);
@@ -18,7 +16,7 @@ function editar(){
        
         data: dataToSend,
         
-        url: 'http://129.151.116.109:8080/api/Admin/update',
+        url: 'http://129.151.116.109:1010/api/Admin/update',
         
         type: 'PUT',
         contentType:'application/json',
@@ -33,13 +31,13 @@ function editar(){
         complete : function(xhr, status) {
             //alert('Petición realizada '+xhr.status);
             limpiarFormulario();
-            consultar();
+            consultarAdmin();
             idCarga=null;
         }
     });
 }
 
-function eliminar(idElemento){
+function eliminarAdmin(idElemento){
     var elemento={
         "idAdmin":idElemento
       };
@@ -53,7 +51,7 @@ function eliminar(idElemento){
         data : dataToSend,
         
        
-        url : "http://129.151.116.109:8080/api/Admin/"+idElemento,
+        url : "http://129.151.116.109:1010/api/Admin/"+idElemento,
         type: 'DELETE',
         contentType:'application/json',
         success : function(json, textStatus, xhr) {
@@ -65,15 +63,14 @@ function eliminar(idElemento){
         complete : function(xhr, status) {
            //lert('Petición realizada '+xhr.status);
             //limpiarFormulario();
-            consultar();
+            consultarAdmin();
         }
     });
 }
 
-
-function cargar(idItem){
+function cargarAdmin(idItem){
     $.ajax({    
-        url : "http://129.151.116.109:8080/api/Admin/"+idItem,
+        url : "http://129.151.116.109:1010/api/Admin/"+idItem,
         type : 'GET',
         dataType : 'JSON',        
 
@@ -81,10 +78,10 @@ function cargar(idItem){
                 console.log(json);
 
                 var misItems=json.items;
-  
-          $("#name").val(json.name);
-          $("#email").val(json.email);
-          $("#password").val(json.password);
+            nameAdmin.value=json.name
+            emailAdmin.value=json.email
+            passwordAdmin.value=json.password
+          
           idCarga = idItem;
           console.log("idCarga es " +idCarga);
           
@@ -96,60 +93,58 @@ function cargar(idItem){
 
 //////------------------
 
-
-function consultar(){
+function consultarAdmin(){
     $.ajax({
-        url:"http://129.151.116.109:8080/api/Admin/all",
+        url:"http://129.151.116.109:1010/api/Admin/all",
         type:"GET",
         datatype:"JSON",
         success:function(respuesta){
             console.log(respuesta);
-            pintarRespuesta(respuesta);
+            pintarRespuestaAdmin(respuesta);
         }
     });
 }
 
-function pintarRespuesta(respuesta){
-    let myTable="<table border='1'>";
-
-    myTable+="<thead>";
-    myTable+="<TR>";
-    myTable+="<th>"+"Nombre"+"</th>";
-    myTable+="<th>"+"Email"+"</th>";
-    myTable+="<th>"+"Contraseña"+"</th>";
-    myTable+="</TR>";
-    myTable+="</thead>";
+function pintarRespuestaAdmin(respuesta){
+    let myTable=`<div class="container" style="width: 100%;"><div class="row" >`;
     for(i=0; i<respuesta.length; i++) {
-        myTable+="<tr>";
-        myTable+="<td>"+respuesta[i].name+"</td>";
-        myTable+="<td>"+respuesta[i].email+"</td>";
-        myTable+="<td>"+respuesta[i].password+"</td>";
-        myTable+="<td><button onclick='eliminar("+respuesta[i].idAdmin+")'>Borrar</button></td>";
-        myTable+="<td><button onclick='cargar("+respuesta[i].idAdmin+")'>Cargar</button></td>";
-        myTable+="</tr>";
+        myTable+=`
+            <div class="card m-2" style="width: 20rem;" id="Card">
+                <div class="card-body">
+                    <h5 class="card-title">${respuesta[i].name}</h5>
+                    <a href="${respuesta[i].email}" class="card-link">${respuesta[i].email}</a>
+                    <!-- p class="card-text">${respuesta[i].password}</p -->
+                    <div align="centre">
+                        <button class="btn btn-danger" onclick="eliminarAdmin(${respuesta[i].idAdmin})">Borrar</button>
+                        <button class="btn btn-info" onclick="cargarAdmin(${respuesta[i].idAdmin})">Cargar</button>
+                    </div>
+                </div>
+            </div>`;   
+         
     }
-    myTable+="</table>";
-    $("#resultados").html(myTable);
+    myTable+=`</div></div></div>`;
+    $("#resultadosAdmin").html(myTable);
+  
 }
 
-function guardar(){
+function guardarAdmin(){
     let var2 = {
-        name:$("#name").val(),
-        email:$("#email").val(),
-        password:$("#password").val()
+        name:$("#nameAdmin").val(),
+        email:$("#emailAdmin").val(),
+        password:$("#passwordAdmin").val()
     };
     $.ajax({
         type:'POST',
         contentType:"application/json; charset=utf-8",
         dataType: 'JSON',
         data: JSON.stringify(var2),
-        url:"http://129.151.116.109:8080/api/Admin/save",
+        url:"http://129.151.116.109:1010/api/Admin/save",
         success:function(respose) {
             console.log("Se guardó correctamente");
             //alert("Se guardó correctametne..");
             //window.location.reload();
             limpiarFormulario();
-            consultar();
+            consultarAdmin();
         },
         error:function(jqXHR, textStatus, errorTrown){
             
@@ -160,7 +155,13 @@ function guardar(){
 }
 
 function limpiarFormulario(){
-    $("#name").val("");
-    $("#email").val("");
-    $("#password").val("");
+    $("#nameAdmin").val("");
+    $("#emailAdmin").val("");
+    $("#passwordAdmin").val("");
 }
+
+$(document).ready(function(){
+    consultarAdmin();
+});
+
+
